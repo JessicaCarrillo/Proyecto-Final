@@ -8,7 +8,7 @@ class Pad(pygame.sprite.Sprite):
         self.image = pygame.Surface((12, 30)).convert()
         self.image.fill((255, 255, 255))
         self.rect = self.image.get_rect(center=pos)
-        self.max_speed = 5
+        self.max_speed = 20
         self.speed = 0
 
     def move_up(self):
@@ -45,6 +45,38 @@ def main():
     except pygame.error as e:
         print ('Cannot load image: ', filename)
         raise SystemExit(str(e))
-    
+    pad_left = Pad((width/6, height/4))
+    pad_right = Pad((5*width/6, 3*height/4))
+    sprites = pygame.sprite.Group(pad_left, pad_right)
+    clock = pygame.time.Clock()
+    fps = 60
+    pygame.key.set_repeat(1,fps)
+ 
+    top = pygame.Rect(0, 0, width, 5)
+    bottom = pygame.Rect(0, height-5, width, 5)
+    while 1:
+        clock.tick(fps)
+
+        pad_left.stop()
+        pad_right.stop()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w:
+                pad_left.move_up()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s:
+                pad_left.move_down()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_UP:
+                pad_right.move_up()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_DOWN:
+                pad_right.move_down()
+            
+        sprites.update()
+        screen.blit(fondo, (0, 0))
+        sprites.draw(screen)
+        pygame.display.flip()
+        
 if __name__ == '__main__':
     main()
